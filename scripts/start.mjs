@@ -1,8 +1,9 @@
 // scripts/start.mjs
-// Production startup wrapper to ensure 0.0.0.0 binding and robust entry resolution on Render
+// Production startup wrapper to ensure 0.0.0.0 binding, auto-build fallback, and robust entry resolution on Render
 
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 process.env.HOST = process.env.HOST || "0.0.0.0";
@@ -31,6 +32,21 @@ for (const p of candidatePaths) {
   if (fs.existsSync(p)) {
     entryPath = p;
     break;
+  }
+}
+
+if (!entryPath) {
+  console.log("[Travezy Production] Pre-built server bundle not found. Triggering automated build now...");
+  try {
+    execSync("npm run build", { stdio: "inherit", cwd: rootDir });
+    for (const p of candidatePaths) {
+      if (fs.existsSync(p)) {
+        entryPath = p;
+        break;
+      }
+    }
+  } catch (buildErr) {
+    console.error("[Travezy Production] Automated fallback build failed:", buildErr);
   }
 }
 
