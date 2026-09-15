@@ -14,6 +14,10 @@ services:
         value: 22.12.0
       - key: NITRO_PRESET
         value: node-server
+      - key: HOST
+        value: 0.0.0.0
+      - key: NITRO_HOST
+        value: 0.0.0.0
       - key: VITE_SUPABASE_URL
         sync: false
       - key: VITE_SUPABASE_PUBLISHABLE_KEY
