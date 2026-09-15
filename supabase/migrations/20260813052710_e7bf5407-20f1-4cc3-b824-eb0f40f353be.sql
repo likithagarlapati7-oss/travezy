@@ -1,0 +1,46 @@
+ALTER TABLE public.services
+  ADD COLUMN IF NOT EXISTS state text,
+  ADD COLUMN IF NOT EXISTS city text;
+
+UPDATE public.services SET city = destination WHERE city IS NULL;
+
+INSERT INTO public.services (title, description, category, destination, city, state, country, image_url, price, currency, rating, review_count, is_active) VALUES
+('Beachfront Resort in North Goa', 'Sea-facing rooms steps from Baga beach, with pool, shack breakfasts and sunset deck.', 'hotel', 'Goa', 'Calangute', 'Goa', 'India', 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=1200&q=80', 4800, 'INR', 0, 0, true),
+('Kerala Backwater Houseboat Stay', 'Overnight on a traditional kettuvallam through Alleppey backwaters with local meals.', 'hotel', 'Alleppey', 'Alappuzha', 'Kerala', 'India', 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80', 7500, 'INR', 0, 0, true),
+('Munnar Tea Estate Homestay', 'Colonial-style homestay surrounded by tea gardens, with estate walks and home-cooked food.', 'hotel', 'Munnar', 'Munnar', 'Kerala', 'India', 'https://images.unsplash.com/photo-1580889240912-c39ecefd3d95?auto=format&fit=crop&w=1200&q=80', 3600, 'INR', 0, 0, true),
+('Wayanad Rainforest Villa', 'Private villa on a spice plantation with plunge pool and guided forest trails.', 'hotel', 'Wayanad', 'Kalpetta', 'Kerala', 'India', 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=80', 6200, 'INR', 0, 0, true),
+('Manali Riverside Mountain Lodge', 'Wooden lodge on the Beas river with bonfire evenings and Solang valley views.', 'hotel', 'Manali', 'Manali', 'Himachal Pradesh', 'India', 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80', 4200, 'INR', 0, 0, true),
+('Shimla Colonial Heritage Hotel', 'Restored British-era property on the Mall Road with valley-facing balconies.', 'hotel', 'Shimla', 'Shimla', 'Himachal Pradesh', 'India', 'https://images.unsplash.com/photo-1597074866923-dc0589150358?auto=format&fit=crop&w=1200&q=80', 5100, 'INR', 0, 0, true),
+('Jaipur Heritage Haveli', 'Hand-painted haveli suites in the Pink City with rooftop dining and fort views.', 'hotel', 'Jaipur', 'Jaipur', 'Rajasthan', 'India', 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1200&q=80', 6800, 'INR', 0, 0, true),
+('Udaipur Lake Palace View Suite', 'Luxury suite overlooking Lake Pichola with boat transfers and terrace breakfast.', 'hotel', 'Udaipur', 'Udaipur', 'Rajasthan', 'India', 'https://images.unsplash.com/photo-1609920658906-8223bd289001?auto=format&fit=crop&w=1200&q=80', 9200, 'INR', 0, 0, true),
+('Coorg Coffee Plantation Resort', 'Cottages amid coffee estates in Madikeri with plantation tours and waterfall trips.', 'hotel', 'Coorg', 'Madikeri', 'Karnataka', 'India', 'https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1200&q=80', 5400, 'INR', 0, 0, true),
+('Ooty Colonial Hill Cottage', 'Fireplace cottage in the Nilgiris with garden views and tea-tasting sessions.', 'hotel', 'Ooty', 'Ooty', 'Tamil Nadu', 'India', 'https://images.unsplash.com/photo-1580137189272-c9379f8864fd?auto=format&fit=crop&w=1200&q=80', 3900, 'INR', 0, 0, true),
+('Pondicherry French Quarter Boutique Stay', 'Pastel heritage villa in White Town, a short walk from Promenade beach.', 'hotel', 'Pondicherry', 'Puducherry', 'Puducherry', 'India', 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1200&q=80', 4400, 'INR', 0, 0, true),
+('Andaman Beach Resort, Havelock', 'Sea-view cottages minutes from Radhanagar beach with snorkelling on request.', 'hotel', 'Andaman & Nicobar', 'Havelock Island', 'Andaman & Nicobar Islands', 'India', 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80', 8600, 'INR', 0, 0, true),
+('Darjeeling Kanchenjunga View Hotel', 'Hillside hotel with sunrise Kanchenjunga views and toy-train station nearby.', 'hotel', 'Darjeeling', 'Darjeeling', 'West Bengal', 'India', 'https://images.unsplash.com/photo-1622308644420-b20142dc993c?auto=format&fit=crop&w=1200&q=80', 3800, 'INR', 0, 0, true),
+('Rishikesh Riverside Yoga Retreat', 'Ganga-facing retreat with daily yoga, meditation and sattvic meals.', 'hotel', 'Rishikesh', 'Rishikesh', 'Uttarakhand', 'India', 'https://images.unsplash.com/photo-1591018653367-7c36b3ec4a1f?auto=format&fit=crop&w=1200&q=80', 4700, 'INR', 0, 0, true),
+('Srinagar Deluxe Houseboat, Dal Lake', 'Carved cedar houseboat on Dal Lake with shikara rides and Kashmiri wazwan dinner.', 'hotel', 'Kashmir', 'Srinagar', 'Jammu & Kashmir', 'India', 'https://images.unsplash.com/photo-1566837945700-30057527ade0?auto=format&fit=crop&w=1200&q=80', 5600, 'INR', 0, 0, true),
+('Leh Ladakh Boutique Mountain Stay', 'Traditional Ladakhi guesthouse in Leh with acclimatisation support and local cuisine.', 'hotel', 'Leh-Ladakh', 'Leh', 'Ladakh', 'India', 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=1200&q=80', 5200, 'INR', 0, 0, true),
+('Taj Mahal Sunrise Guided Tour', 'Skip-the-queue sunrise entry to the Taj Mahal with a licensed Agra guide.', 'tour', 'Agra', 'Agra', 'Uttar Pradesh', 'India', 'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=80', 2200, 'INR', 0, 0, true),
+('Old Delhi Heritage & Street Food Walk', 'Chandni Chowk lanes, Jama Masjid and a guided tasting of Old Delhi classics.', 'tour', 'Delhi', 'New Delhi', 'Delhi', 'India', 'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=80', 1800, 'INR', 0, 0, true),
+('Golden Temple & Wagah Border Day Tour', 'Amritsar day tour covering the Golden Temple, Jallianwala Bagh and the border ceremony.', 'tour', 'Amritsar', 'Amritsar', 'Punjab', 'India', 'https://images.unsplash.com/photo-1609920658906-8223bd289001?auto=format&fit=crop&w=1200&q=80', 2400, 'INR', 0, 0, true),
+('Varanasi Ganga Aarti & Sunrise Boat Ride', 'Evening aarti at Dashashwamedh Ghat and a sunrise rowboat along the ghats.', 'tour', 'Varanasi', 'Varanasi', 'Uttar Pradesh', 'India', 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1200&q=80', 1600, 'INR', 0, 0, true),
+('Hampi Ruins Heritage Cycle Tour', 'Guided cycling tour through Vijayanagara temples, bazaars and boulder landscapes.', 'tour', 'Hampi', 'Hampi', 'Karnataka', 'India', 'https://images.unsplash.com/photo-1600100397608-f010e3f4ba1f?auto=format&fit=crop&w=1200&q=80', 1900, 'INR', 0, 0, true),
+('Mysuru Palace & Chamundi Hills Tour', 'Half-day guided tour of Mysore Palace, Devaraja Market and Chamundeshwari temple.', 'tour', 'Mysuru', 'Mysuru', 'Karnataka', 'India', 'https://images.unsplash.com/photo-1600100397608-f010e3f4ba1f?auto=format&fit=crop&w=1200&q=80', 1700, 'INR', 0, 0, true),
+('Sikkim Gangtok & Tsomgo Lake Excursion', 'Day trip from Gangtok to Tsomgo Lake and Baba Mandir with permits arranged.', 'tour', 'Sikkim', 'Gangtok', 'Sikkim', 'India', 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80', 3100, 'INR', 0, 0, true),
+('Rishikesh White Water Rafting', '16 km Ganga rafting stretch with certified guides and cliff-jump stop.', 'experience', 'Rishikesh', 'Rishikesh', 'Uttarakhand', 'India', 'https://images.unsplash.com/photo-1530866495561-507c9faab2ed?auto=format&fit=crop&w=1200&q=80', 1400, 'INR', 0, 0, true),
+('Hyderabad Charminar & Biryani Trail', 'Old City walk through Charminar and Laad Bazaar ending with an authentic biryani tasting.', 'experience', 'Hyderabad', 'Hyderabad', 'Telangana', 'India', 'https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?auto=format&fit=crop&w=1200&q=80', 1500, 'INR', 0, 0, true),
+('Bengaluru Airport Private Transfer', 'Air-conditioned private transfer between Kempegowda airport and city hotels.', 'transport', 'Bengaluru', 'Bengaluru', 'Karnataka', 'India', 'https://images.unsplash.com/photo-1595872018818-97555653a011?auto=format&fit=crop&w=1200&q=80', 1200, 'INR', 0, 0, true);
+
+UPDATE public.services SET state = 'Dubrovnik-Neretva' WHERE destination = 'Dubrovnik';
+UPDATE public.services SET state = 'South Aegean' WHERE destination = 'Santorini';
+UPDATE public.services SET state = 'Capital Region' WHERE destination = 'Reykjavik';
+UPDATE public.services SET state = 'Bali', city = 'Ubud' WHERE destination = 'Ubud, Bali';
+UPDATE public.services SET state = 'Campania' WHERE destination = 'Amalfi Coast';
+UPDATE public.services SET state = 'Kansai' WHERE destination = 'Kyoto';
+UPDATE public.services SET state = 'Kaafu Atoll' WHERE destination = 'Maldives';
+UPDATE public.services SET state = 'Cusco Region' WHERE destination = 'Cusco';
+UPDATE public.services SET state = 'Western Cape' WHERE destination = 'Cape Town';
+UPDATE public.services SET state = 'Valais' WHERE destination = 'Zermatt';
+UPDATE public.services SET state = 'Mara Region' WHERE destination = 'Serengeti';
+UPDATE public.services SET state = 'Dubai' WHERE destination = 'Dubai';

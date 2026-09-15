@@ -1,0 +1,231 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Travezy design system — luxury travel + adventure.
+ * Deep ocean blue, white, soft turquoise, warm gold.
+ * All colors are oklch tokens. Never hardcode colors in components.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-ocean: var(--ocean);
+  --color-ocean-foreground: var(--ocean-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --radius: 1rem;
+
+  --background: oklch(0.99 0.005 220);
+  --foreground: oklch(0.22 0.06 250);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.06 250);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.06 250);
+
+  /* Deep ocean blue */
+  --primary: oklch(0.35 0.11 245);
+  --primary-foreground: oklch(0.99 0.005 220);
+  --ocean: oklch(0.24 0.08 250);
+  --ocean-foreground: oklch(0.98 0.01 210);
+
+  /* Soft turquoise */
+  --secondary: oklch(0.93 0.05 195);
+  --secondary-foreground: oklch(0.28 0.08 240);
+  --accent: oklch(0.78 0.11 195);
+  --accent-foreground: oklch(0.22 0.06 250);
+
+  /* Warm gold */
+  --gold: oklch(0.79 0.13 82);
+  --gold-foreground: oklch(0.24 0.06 60);
+
+  --muted: oklch(0.96 0.012 220);
+  --muted-foreground: oklch(0.52 0.035 240);
+
+  --destructive: oklch(0.58 0.22 27);
+  --destructive-foreground: oklch(0.99 0.005 220);
+
+  --border: oklch(0.91 0.015 225);
+  --input: oklch(0.91 0.015 225);
+  --ring: oklch(0.62 0.1 205);
+
+  --chart-1: oklch(0.35 0.11 245);
+  --chart-2: oklch(0.72 0.11 195);
+  --chart-3: oklch(0.79 0.13 82);
+  --chart-4: oklch(0.55 0.09 230);
+  --chart-5: oklch(0.66 0.12 165);
+
+  --sidebar: oklch(0.98 0.008 220);
+  --sidebar-foreground: oklch(0.22 0.06 250);
+  --sidebar-primary: oklch(0.35 0.11 245);
+  --sidebar-primary-foreground: oklch(0.99 0.005 220);
+  --sidebar-accent: oklch(0.93 0.05 195);
+  --sidebar-accent-foreground: oklch(0.28 0.08 240);
+  --sidebar-border: oklch(0.91 0.015 225);
+  --sidebar-ring: oklch(0.62 0.1 205);
+
+  --gradient-ocean: linear-gradient(135deg, oklch(0.24 0.08 250), oklch(0.42 0.11 225));
+  --gradient-lagoon: linear-gradient(120deg, oklch(0.35 0.11 245), oklch(0.72 0.11 195));
+  --gradient-gold: linear-gradient(120deg, oklch(0.82 0.13 88), oklch(0.72 0.14 62));
+  --shadow-card: 0 18px 40px -24px oklch(0.24 0.08 250 / 0.45);
+  --shadow-float: 0 30px 60px -30px oklch(0.24 0.08 250 / 0.55);
+  --glass-bg: oklch(1 0 0 / 0.12);
+  --glass-border: oklch(1 0 0 / 0.25);
+}
+
+.dark {
+  --background: oklch(0.18 0.045 250);
+  --foreground: oklch(0.97 0.01 210);
+  --card: oklch(0.23 0.05 250);
+  --card-foreground: oklch(0.97 0.01 210);
+  --popover: oklch(0.23 0.05 250);
+  --popover-foreground: oklch(0.97 0.01 210);
+  --primary: oklch(0.72 0.11 195);
+  --primary-foreground: oklch(0.18 0.045 250);
+  --ocean: oklch(0.15 0.04 250);
+  --ocean-foreground: oklch(0.97 0.01 210);
+  --secondary: oklch(0.3 0.06 240);
+  --secondary-foreground: oklch(0.97 0.01 210);
+  --accent: oklch(0.62 0.1 195);
+  --accent-foreground: oklch(0.15 0.04 250);
+  --gold: oklch(0.79 0.13 82);
+  --gold-foreground: oklch(0.2 0.05 60);
+  --muted: oklch(0.28 0.05 245);
+  --muted-foreground: oklch(0.72 0.03 215);
+  --destructive: oklch(0.65 0.19 25);
+  --destructive-foreground: oklch(0.97 0.01 210);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.62 0.1 205);
+  --sidebar: oklch(0.23 0.05 250);
+  --sidebar-foreground: oklch(0.97 0.01 210);
+  --sidebar-primary: oklch(0.72 0.11 195);
+  --sidebar-primary-foreground: oklch(0.18 0.045 250);
+  --sidebar-accent: oklch(0.3 0.06 240);
+  --sidebar-accent-foreground: oklch(0.97 0.01 210);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.62 0.1 205);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@utility glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+@utility glass-card {
+  background: color-mix(in oklab, var(--card) 78%, transparent);
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+@utility bg-gradient-ocean {
+  background-image: var(--gradient-ocean);
+}
+
+@utility bg-gradient-lagoon {
+  background-image: var(--gradient-lagoon);
+}
+
+@utility bg-gradient-gold {
+  background-image: var(--gradient-gold);
+}
+
+@utility shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+@utility shadow-float {
+  box-shadow: var(--shadow-float);
+}
+
+@utility text-gradient-gold {
+  background-image: var(--gradient-gold);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@keyframes float-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-float-up {
+  animation: float-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
