@@ -183,9 +183,29 @@ export async function authenticateRequest(request: Request) {
     },
     auth: { persistSession: false },
   });
-  const { data, error } = await supabase.auth.getClaims(token);
-  if (error || !data?.claims?.sub) {
+  let userId: string | null = null;
+  try {
+    const { data, error } = await supabase.auth.getClaims(token);
+    if (!error && data?.claims?.sub) {
+      userId = data.claims.sub;
+    }
+  } catch {
+    // Fallback
+  }
+
+  if (!userId) {
+    try {
+      const { data: userData, error: userErr } = await supabase.auth.getUser(token);
+      if (!userErr && userData?.user?.id) {
+        userId = userData.user.id;
+      }
+    } catch {
+      // Fallback failed
+    }
+  }
+
+  if (!userId) {
     throw new Error("Unauthorized: Invalid token");
   }
-  return { supabase, userId: data.claims.sub };
+  return { supabase, userId };
 }
