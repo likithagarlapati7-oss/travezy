@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { BadgeCheck, MapPin, Star } from "lucide-react";
+import { BadgeCheck, Compass, MapPin, Star, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WishlistButton } from "@/components/WishlistButton";
 import { formatPrice, providerName, type ServiceWithProvider } from "@/lib/travezy";
+import { getAttractionInfo } from "@/lib/attractions";
 
 export function ServiceCard({ service, index = 0 }: { service: ServiceWithProvider; index?: number }) {
   const itemType =
@@ -11,6 +12,8 @@ export function ServiceCard({ service, index = 0 }: { service: ServiceWithProvid
       : service.category === "restaurant"
         ? "restaurant"
         : "experience";
+
+  const attraction = itemType === "experience" ? getAttractionInfo(service) : null;
 
   return (
     <article
@@ -28,7 +31,7 @@ export function ServiceCard({ service, index = 0 }: { service: ServiceWithProvid
           className="size-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <span className="glass-panel absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-semibold capitalize text-primary-foreground">
-          {service.category}
+          {attraction ? attraction.attractionType : service.category}
         </span>
         <div className="absolute right-4 top-4 flex items-center gap-2">
           {Number(service.rating) > 0 && (
@@ -72,17 +75,38 @@ export function ServiceCard({ service, index = 0 }: { service: ServiceWithProvid
         <p className="line-clamp-2 text-sm text-muted-foreground">{service.description}</p>
         <div className="flex items-center justify-between pt-2">
           <div>
-            <p className="font-display text-2xl font-semibold text-primary">
-              {formatPrice(Number(service.price), service.currency)}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              per person
-              {service.review_count > 0 ? ` · ${service.review_count} reviews` : " · new listing"}
-            </p>
+            {attraction ? (
+              <>
+                <p className="font-display text-base font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <Ticket className="size-3.5" />
+                  {attraction.entryFeeDisplay}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  ⏱️ {attraction.recommendedDuration}
+                  {service.review_count > 0 ? ` · ${service.review_count} reviews` : ""}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="font-display text-2xl font-semibold text-primary">
+                  {formatPrice(Number(service.price), service.currency)}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {service.category === "hotel" ? "per night" : "per person"}
+                  {service.review_count > 0 ? ` · ${service.review_count} reviews` : " · new listing"}
+                </p>
+              </>
+            )}
           </div>
-          <Button asChild variant="ocean" size="sm">
+          <Button asChild variant={attraction ? "default" : "ocean"} size="sm" className={attraction ? "bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold gap-1" : ""}>
             <Link to="/services/$serviceId" params={{ serviceId: service.id }}>
-              View Details
+              {attraction ? (
+                <>
+                  <Compass className="size-3.5" /> Explore
+                </>
+              ) : (
+                "View Details"
+              )}
             </Link>
           </Button>
         </div>

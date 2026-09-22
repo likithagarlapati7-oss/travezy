@@ -28,6 +28,7 @@ import {
   Sparkles,
   Star,
   SunMedium,
+  Ticket,
   Umbrella,
   User,
   Utensils,
@@ -58,6 +59,7 @@ import { getDestinationBySlug, type DestinationData } from "@/data/destinations-
 import { getServiceCoordinates } from "@/lib/mapbox";
 import { GuideWithDistance } from "@/lib/guides";
 import { WeatherWidget } from "@/components/WeatherWidget";
+import { getAttractionInfo } from "@/lib/attractions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/destinations/$destination")({
@@ -797,18 +799,18 @@ function DestinationDetailPage() {
           )}
         </section>
 
-        {/* ─── 4. TOURISM & EXPERIENCES (6-8 preview cards) ───────────────────── */}
+        {/* ─── 4. TOURISM & EXPERIENCES (Attraction Discovery & Travel Guide) ───────────────────── */}
         <section className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-600 mb-1">
-                <Compass className="size-4" /> Unforgettable Excursions
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                <Compass className="size-4" /> Places & Things to Do
               </div>
               <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground">
                 Tourism & Experiences
               </h2>
               <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                Guided plantation walks, backwater cruises, heritage cycling tours and wilderness safaris.
+                Historic forts, coastal beaches, waterfalls, wildlife sanctuaries, heritage monuments & sightseeing in {destinationData.name}.
               </p>
             </div>
 
@@ -822,7 +824,7 @@ function DestinationDetailPage() {
                 {expandTours ? (
                   <>Show Less <ChevronUp className="size-3.5" /></>
                 ) : (
-                  <>View All Experiences ({destinationTours.length}) <ChevronDown className="size-3.5" /></>
+                  <>View All Attractions ({destinationTours.length}) <ChevronDown className="size-3.5" /></>
                 )}
               </Button>
             )}
@@ -830,100 +832,180 @@ function DestinationDetailPage() {
 
           {visibleTours.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {visibleTours.map((tour) => (
-                <div
-                  key={tour.id}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xs hover:shadow-card transition-all duration-300"
-                >
-                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
-                    <img
-                      src={tour.image_url}
-                      alt={tour.title}
-                      className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              {visibleTours.map((tour) => {
+                const attraction = getAttractionInfo(tour);
 
-                    <div className="absolute top-3 left-3">
-                      <Badge className="bg-emerald-600/90 text-white text-[11px] font-semibold">
-                        {tour.tour_type}
-                      </Badge>
-                    </div>
-
-                    <div className="absolute top-3 right-3">
-                      <WishlistButton
-                        item={{
-                          item_type: "experience",
-                          item_id: tour.id,
-                          item_title: tour.title,
-                          item_image: tour.image_url,
-                          item_category: tour.tour_type,
-                          destination: tour.destination,
-                          city: tour.city,
-                          state: tour.state,
-                          price: tour.price,
-                          rating: tour.rating,
-                          review_count: tour.review_count,
-                        }}
-                      />
-                    </div>
-
-                    <div className="absolute bottom-3 left-3 text-white">
-                      <p className="text-xs font-medium flex items-center gap-1 drop-shadow-sm">
-                        <Clock className="size-3 text-emerald-400" /> {tour.duration}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-1 flex-col justify-between p-5 space-y-3">
+                return (
+                  <div
+                    key={tour.id}
+                    className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card shadow-xs hover:shadow-card transition-all duration-300"
+                  >
                     <div>
-                      <div className="flex items-center justify-between gap-2 text-xs mb-1">
-                        <span className="font-semibold text-emerald-600 dark:text-emerald-400">Eco & Heritage</span>
-                        <span className="flex items-center gap-1 font-semibold text-foreground">
-                          ★ {tour.rating.toFixed(1)} ({tour.review_count})
-                        </span>
-                      </div>
+                      {/* Attraction Image Header */}
+                      <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+                        <img
+                          src={tour.image_url}
+                          alt={tour.title}
+                          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
-                      <h3 className="font-display font-bold text-foreground text-base line-clamp-1 group-hover:text-primary transition-colors">
-                        {tour.title}
-                      </h3>
-
-                      <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-                        {tour.description}
-                      </p>
-
-                      <div className="mt-3 flex flex-wrap gap-1">
-                        {tour.included.slice(0, 3).map((inc) => (
-                          <Badge key={inc} variant="secondary" className="text-[10px] px-2 py-0.5">
-                            ✓ {inc}
+                        {/* Attraction Category Badge */}
+                        <div className="absolute top-3 left-3">
+                          <Badge className="bg-emerald-600/90 text-white text-[11px] font-semibold backdrop-blur-xs">
+                            {attraction.attractionType || tour.tour_type}
                           </Badge>
-                        ))}
+                        </div>
+
+                        {/* Wishlist Button */}
+                        <div className="absolute top-3 right-3">
+                          <WishlistButton
+                            item={{
+                              item_type: "experience",
+                              item_id: tour.id,
+                              item_title: tour.title,
+                              item_image: tour.image_url,
+                              item_category: tour.tour_type,
+                              destination: tour.destination,
+                              city: tour.city,
+                              state: tour.state,
+                              price: tour.price,
+                              rating: tour.rating,
+                              review_count: tour.review_count,
+                            }}
+                          />
+                        </div>
+
+                        {/* Visiting Hours & Duration Overlay */}
+                        <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-white text-xs">
+                          <span className="flex items-center gap-1 font-medium drop-shadow-sm bg-black/40 px-2 py-0.5 rounded-full backdrop-blur-xs">
+                            <Clock className="size-3 text-emerald-400" />
+                            {attraction.openingTime && attraction.closingTime
+                              ? `${attraction.openingTime} – ${attraction.closingTime}`
+                              : tour.duration}
+                          </span>
+                          <span className="text-[11px] font-medium text-white/90 bg-black/40 px-2 py-0.5 rounded-full backdrop-blur-xs">
+                            ⏱️ {attraction.recommendedDuration}
+                          </span>
+                        </div>
                       </div>
 
-                      <p className="mt-3 text-base font-extrabold text-foreground">
-                        ₹{tour.price.toLocaleString("en-IN")}{" "}
-                        <span className="text-xs font-normal text-muted-foreground">/ person</span>
-                      </p>
+                      {/* Attraction Body Content */}
+                      <div className="p-5 space-y-3">
+                        {/* Location & Rating Header */}
+                        <div className="flex items-center justify-between gap-2 text-xs">
+                          <span className="flex items-center gap-1 text-muted-foreground font-medium truncate">
+                            <MapPin className="size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                            <span className="truncate">
+                              {tour.city || destinationData.name}, {tour.state || destinationData.state}
+                            </span>
+                          </span>
+                          <span className="flex items-center gap-1 font-semibold text-foreground shrink-0 bg-muted/50 px-2 py-0.5 rounded-md">
+                            ★ {tour.rating.toFixed(1)} <span className="text-muted-foreground font-normal">({tour.review_count})</span>
+                          </span>
+                        </div>
+
+                        {/* Attraction Name */}
+                        <h3 className="font-display font-bold text-foreground text-lg leading-snug group-hover:text-primary transition-colors">
+                          {tour.title}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                          {tour.description}
+                        </p>
+
+                        {/* Distance from destination/city */}
+                        {attraction.distanceFromCity && (
+                          <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+                            <Navigation className="size-3 text-primary/70 shrink-0" />
+                            <span>{attraction.distanceFromCity}</span>
+                          </p>
+                        )}
+
+                        {/* Things to do / Activities pills */}
+                        {attraction.thingsToDo && attraction.thingsToDo.length > 0 && (
+                          <div className="pt-1">
+                            <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground mb-1.5">
+                              What you can do here:
+                            </p>
+                            <div className="flex flex-wrap gap-1">
+                              {attraction.thingsToDo.slice(0, 3).map((thing) => (
+                                <span
+                                  key={thing}
+                                  className="inline-flex items-center text-[10px] font-medium bg-secondary/80 text-secondary-foreground px-2 py-0.5 rounded-md border border-border/50"
+                                >
+                                  ✓ {thing}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Ticket & Entry Fee Block */}
+                        <div className="mt-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-950/20 p-3 space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+                              <Ticket className="size-3.5" />
+                              {attraction.entryFeeDisplay}
+                            </span>
+                            {attraction.parkingFee && (
+                              <span className="text-[10px] text-muted-foreground">
+                                🚗 {attraction.parkingFee.split(" ")[0]}
+                              </span>
+                            )}
+                          </div>
+
+                          {(attraction.adultTicket || attraction.childTicket || attraction.foreignTicket) && (
+                            <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground pt-0.5">
+                              {attraction.adultTicket && (
+                                <span>
+                                  Adult: <strong className="text-foreground">{attraction.adultTicket}</strong>
+                                </span>
+                              )}
+                              {attraction.childTicket && (
+                                <span>
+                                  Child: <strong className="text-foreground">{attraction.childTicket}</strong>
+                                </span>
+                              )}
+                              {attraction.foreignTicket && (
+                                <span>
+                                  Foreign: <strong className="text-foreground">{attraction.foreignTicket}</strong>
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-2 pt-3 border-t border-border/60">
-                      <Button asChild variant="outline" size="sm" className="flex-1 rounded-xl text-xs gap-1">
-                        <Link to={`/services/${tour.id}` as any}>
-                          <ExternalLink className="size-3" /> View Details
-                        </Link>
-                      </Button>
-                      <Button asChild size="sm" variant="default" className="rounded-xl text-xs font-semibold px-4">
-                        <Link to={`/services/${tour.id}` as any}>
-                          Book Experience
-                        </Link>
-                      </Button>
+                    {/* Action Buttons: Explore & View on Map */}
+                    <div className="p-5 pt-0">
+                      <div className="flex items-center gap-2 pt-3 border-t border-border/60">
+                        <Button asChild size="sm" variant="default" className="flex-1 rounded-xl text-xs font-semibold gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs">
+                          <Link to={`/services/${tour.id}` as any}>
+                            <Compass className="size-3.5" /> Explore
+                          </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="sm" className="rounded-xl text-xs font-semibold gap-1.5 px-3">
+                          <a
+                            href={attraction.googleMapsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`View ${tour.title} on Google Maps`}
+                          >
+                            <Navigation className="size-3.5 text-emerald-600 dark:text-emerald-400" /> Map
+                          </a>
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground italic">No tours listed yet for {destinationData.name}.</p>
+            <p className="text-sm text-muted-foreground italic">No tourist attractions listed yet for {destinationData.name}.</p>
           )}
         </section>
 

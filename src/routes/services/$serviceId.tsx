@@ -11,9 +11,15 @@ import {
   MessageSquare,
   Sparkles,
   Star,
+  Ticket,
   Users,
   Utensils,
   ArrowUpDown,
+  Navigation,
+  Clock,
+  CheckCircle2,
+  Car,
+  Info,
 } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { MapboxMap, type ServiceMarker } from "@/components/MapboxMap";
@@ -26,6 +32,7 @@ import { useUserInterests } from "@/hooks/useUserInterests";
 import { formatPrice, providerName, serviceQuery, serviceReviewsQuery, servicesQuery, type Service } from "@/lib/travezy";
 import { getRelatedRecommendations } from "@/lib/recommendations";
 import { getServiceCoordinates } from "@/lib/mapbox";
+import { getAttractionInfo } from "@/lib/attractions";
 import { ChatDialog } from "@/components/chat/ChatDialog";
 
 export const Route = createFileRoute("/services/$serviceId")({
@@ -140,9 +147,16 @@ function ServiceDetail() {
 
   const totalReviewsCount = reviewList.length > 0 ? reviewList.length : (service.review_count ?? 120);
 
+  const isExperience = ["tour", "activity", "adventure", "attraction", "sightseeing", "experience"].includes(
+    service.category?.toLowerCase() || ""
+  );
+  const attraction = useMemo(() => {
+    return isExperience ? getAttractionInfo(service) : null;
+  }, [isExperience, service]);
+
   return (
     <PageShell
-      eyebrow={service.category}
+      eyebrow={attraction ? "Attraction Discovery & Travel Guide" : service.category}
       title={service.title}
       subtitle={`${service.destination}${service.country ? `, ${service.country}` : ""}`}
     >
@@ -153,10 +167,10 @@ function ServiceDetail() {
             alt={service.title}
             className="aspect-16/10 w-full rounded-4xl object-cover shadow-float"
           />
-          <div className="rounded-3xl border border-border bg-card p-7 shadow-card">
+          <div className="rounded-3xl border border-border bg-card p-7 shadow-card space-y-6">
             <div className="flex flex-wrap items-center gap-5 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
-                <MapPin className="size-4 text-accent" />
+                <MapPin className="size-4 text-emerald-600 dark:text-emerald-400" />
                 {service.destination}
               </span>
               <span className="flex items-center gap-1.5">
@@ -164,16 +178,87 @@ function ServiceDetail() {
                 {avgRatingDisplay} ({totalReviewsCount} reviews)
               </span>
             </div>
-            <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-medium capitalize text-secondary-foreground">
-              {service.category}
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 px-3 py-1 text-xs font-semibold capitalize">
+              {attraction ? attraction.attractionType : service.category}
             </span>
-            <h2 className="mt-6 text-2xl">About this service</h2>
-            <p className="mt-3 leading-relaxed text-muted-foreground">{service.description}</p>
+
+            <div>
+              <h2 className="text-2xl font-display font-bold">
+                {attraction ? "About this attraction" : "About this service"}
+              </h2>
+              <p className="mt-3 leading-relaxed text-muted-foreground">{service.description}</p>
+            </div>
+
+            {/* Things To Do for Tourist Attractions */}
+            {attraction && attraction.thingsToDo && attraction.thingsToDo.length > 0 && (
+              <div className="pt-4 border-t border-border space-y-3">
+                <h3 className="font-display text-lg font-bold text-foreground flex items-center gap-2">
+                  <Sparkles className="size-4 text-emerald-600 dark:text-emerald-400" />
+                  What you can do here (Things to Do)
+                </h3>
+                <div className="grid sm:grid-cols-2 gap-2.5 pt-1">
+                  {attraction.thingsToDo.map((thing) => (
+                    <div
+                      key={thing}
+                      className="flex items-start gap-2.5 p-3 rounded-2xl bg-muted/40 border border-border/70 text-xs text-foreground/90 font-medium"
+                    >
+                      <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                      <span>{thing}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Best Time & Visiting Guidelines for Tourist Attractions */}
+            {attraction && (
+              <div className="pt-4 border-t border-border space-y-3">
+                <h3 className="font-display text-lg font-bold text-foreground flex items-center gap-2">
+                  <Info className="size-4 text-emerald-600 dark:text-emerald-400" />
+                  Visiting Information & Best Time to Visit
+                </h3>
+                <div className="grid sm:grid-cols-2 gap-4 pt-1 text-xs">
+                  <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border/70 space-y-1">
+                    <span className="font-bold text-foreground flex items-center gap-1.5">
+                      <Clock className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                      Visiting Hours
+                    </span>
+                    <p className="text-muted-foreground">{attraction.timingsDisplay}</p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border/70 space-y-1">
+                    <span className="font-bold text-foreground flex items-center gap-1.5">
+                      <Compass className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                      Recommended Duration
+                    </span>
+                    <p className="text-muted-foreground">{attraction.recommendedDuration}</p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border/70 space-y-1">
+                    <span className="font-bold text-foreground flex items-center gap-1.5">
+                      <CalendarDays className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                      Best Season & Time
+                    </span>
+                    <p className="text-muted-foreground">{attraction.bestTimeToVisit}</p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-secondary/50 border border-border/70 space-y-1">
+                    <span className="font-bold text-foreground flex items-center gap-1.5">
+                      <MapPin className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                      Location & Distance
+                    </span>
+                    <p className="text-muted-foreground">{attraction.distanceFromCity}</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="rounded-3xl border border-border bg-card p-7 shadow-card">
             <div className="flex items-center justify-between gap-4">
-              <h2 className="text-2xl font-display font-bold">Hosted by</h2>
+              <h2 className="text-2xl font-display font-bold">
+                {attraction ? "Attraction Curator" : "Hosted by"}
+              </h2>
               {service.providers?.user_id && user && user.id !== service.providers.user_id && (
                 <Button
                   variant="outline"
@@ -182,7 +267,7 @@ function ServiceDetail() {
                   className="rounded-full gap-2 border-primary/30 text-primary hover:bg-primary/10 shadow-xs"
                 >
                   <MessageSquare className="size-4" />
-                  Contact Host
+                  Contact Curator
                 </Button>
               )}
             </div>
@@ -422,86 +507,272 @@ function ServiceDetail() {
           </div>
         </div>
 
-        <aside className="h-fit lg:sticky lg:top-28">
-          <div className="rounded-3xl border border-border bg-card p-7 shadow-float">
-            <p className="font-display text-4xl text-primary">
-              {formatPrice(Number(service.price), service.currency)}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {["hotel", "resort", "homestay", "heritage"].includes(service.category?.toLowerCase())
-                ? "per night"
-                : "per person"}
-            </p>
+        <aside className="h-fit lg:sticky lg:top-28 space-y-6">
+          {attraction ? (
+            <>
+              {/* Attraction Visitor & Admission Ticket Guide */}
+              <div className="rounded-3xl border border-border bg-card p-6 sm:p-7 shadow-float space-y-6">
+                <div className="border-b border-border pb-4">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+                    <Ticket className="size-4" /> Visitor & Ticket Guide
+                  </div>
+                  <h3 className="font-display text-2xl font-bold text-foreground">
+                    {attraction.entryFeeDisplay}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Official admission and visiting guide
+                  </p>
+                </div>
 
-            <div className="mt-6 space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="date" className="flex items-center gap-1.5">
-                  <CalendarDays className="size-4 text-accent" /> Travel date
-                </Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={date}
-                  min={new Date().toISOString().split("T")[0]}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="h-11 rounded-xl"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="guests" className="flex items-center gap-1.5">
-                  <Users className="size-4 text-accent" /> Guests
-                </Label>
-                <Input
-                  id="guests"
-                  type="number"
-                  min={1}
-                  max={20}
-                  value={guests}
-                  onChange={(e) => setGuests(Math.max(1, Number(e.target.value)))}
-                  className="h-11 rounded-xl"
-                />
-              </div>
-            </div>
+                {/* Ticket breakdown table */}
+                <div className="space-y-3 bg-muted/40 p-4 rounded-2xl border border-border/70 text-xs">
+                  <div className="flex items-center justify-between font-bold text-foreground text-[11px] uppercase tracking-wider border-b border-border/50 pb-2">
+                    <span>Ticket Category</span>
+                    <span>Admission Fee</span>
+                  </div>
+                  <div className="divide-y divide-border/50">
+                    <div className="flex justify-between py-1.5">
+                      <span className="text-muted-foreground">Adult / General:</span>
+                      <span className="font-semibold text-foreground">{attraction.adultTicket || "Free / Included"}</span>
+                    </div>
+                    {attraction.childTicket && (
+                      <div className="flex justify-between py-1.5">
+                        <span className="text-muted-foreground">Child Admission:</span>
+                        <span className="font-semibold text-foreground">{attraction.childTicket}</span>
+                      </div>
+                    )}
+                    {attraction.foreignTicket && (
+                      <div className="flex justify-between py-1.5">
+                        <span className="text-muted-foreground">Foreign Tourist:</span>
+                        <span className="font-semibold text-foreground">{attraction.foreignTicket}</span>
+                      </div>
+                    )}
+                    {attraction.parkingFee && (
+                      <div className="flex justify-between py-1.5">
+                        <span className="text-muted-foreground">Vehicle Parking:</span>
+                        <span className="font-semibold text-foreground">{attraction.parkingFee}</span>
+                      </div>
+                    )}
+                    {attraction.activityFee && (
+                      <div className="flex justify-between py-1.5">
+                        <span className="text-muted-foreground">Activity / Trail Fee:</span>
+                        <span className="font-semibold text-foreground">{attraction.activityFee}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-            <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
-              <span className="text-sm text-muted-foreground">Total</span>
-              <span className="font-display text-2xl text-foreground">
-                {formatPrice(Number(service.price) * guests, service.currency)}
-              </span>
-            </div>
+                {/* Quick Visiting Key Facts */}
+                <div className="space-y-3 text-xs">
+                  <div className="flex items-start gap-2.5">
+                    <Clock className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-semibold text-foreground block">Visiting Timings</span>
+                      <span className="text-muted-foreground">{attraction.timingsDisplay}</span>
+                    </div>
+                  </div>
 
-            {role === "provider" ? (
-              <div className="mt-6 rounded-xl bg-muted p-3 text-center text-xs text-muted-foreground">
-                Providers cannot book travel services.
+                  <div className="flex items-start gap-2.5">
+                    <Compass className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-semibold text-foreground block">Recommended Visit Duration</span>
+                      <span className="text-muted-foreground">{attraction.recommendedDuration}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <CalendarDays className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-semibold text-foreground block">Best Time to Visit</span>
+                      <span className="text-muted-foreground">{attraction.bestTimeToVisit}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5">
+                    <MapPin className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-semibold text-foreground block">Location & Distance</span>
+                      <span className="text-muted-foreground">{attraction.distanceFromCity}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Direct Google Maps Action */}
+                <div className="pt-2 border-t border-border space-y-2.5">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="w-full rounded-2xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md gap-2"
+                  >
+                    <a
+                      href={attraction.googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Navigation className="size-4" /> Get Directions on Google Maps
+                    </a>
+                  </Button>
+
+                  <p className="text-[11px] text-center text-muted-foreground">
+                    🎟️ Tickets are obtainable directly at the entry gate / venue admission counter.
+                  </p>
+                </div>
               </div>
-            ) : user ? (
-              <Button
-                variant="hero"
-                size="lg"
-                className="mt-6 w-full"
-                onClick={() => {
-                  navigate({
-                    to: "/services/$serviceId/book",
-                    params: { serviceId: service.id },
-                    search: { date: date || undefined, guests },
-                  });
-                }}
-              >
-                Book Now
-              </Button>
-            ) : (
-              <Button asChild variant="hero" size="lg" className="mt-6 w-full">
-                <Link
-                  to="/login"
-                  search={{
-                    redirect: `/services/${service.id}/book?date=${date}&guests=${guests}`,
+
+              {/* If it's a bookable outdoor adventure activity (safari, guided trek, cruise, scuba) */}
+              {attraction.isBookableActivity && (
+                <div className="rounded-3xl border border-border bg-card p-6 shadow-card space-y-4">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
+                    <Sparkles className="size-3.5" /> Optional Guided Excursion Booking
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Reserve an advance guided slot, safari permit, or instructor-led equipment for this attraction.
+                  </p>
+
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="tour-date" className="text-xs">Select Date</Label>
+                      <Input
+                        id="tour-date"
+                        type="date"
+                        value={date}
+                        min={new Date().toISOString().split("T")[0]}
+                        onChange={(e) => setDate(e.target.value)}
+                        className="h-10 rounded-xl text-xs"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="tour-guests" className="text-xs">Travellers / Participants</Label>
+                      <Input
+                        id="tour-guests"
+                        type="number"
+                        min={1}
+                        max={20}
+                        value={guests}
+                        onChange={(e) => setGuests(Math.max(1, Number(e.target.value)))}
+                        className="h-10 rounded-xl text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center text-sm pt-2 border-t border-border font-bold">
+                    <span>Activity Total:</span>
+                    <span className="text-primary text-base">
+                      {formatPrice(Number(service.price) * guests, service.currency)}
+                    </span>
+                  </div>
+
+                  {user ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full rounded-xl text-xs font-semibold"
+                      onClick={() => {
+                        navigate({
+                          to: "/services/$serviceId/book",
+                          params: { serviceId: service.id },
+                          search: { date: date || undefined, guests },
+                        });
+                      }}
+                    >
+                      Book Guided Activity
+                    </Button>
+                  ) : (
+                    <Button asChild size="sm" variant="outline" className="w-full rounded-xl text-xs font-semibold">
+                      <Link
+                        to="/login"
+                        search={{
+                          redirect: `/services/${service.id}/book?date=${date}&guests=${guests}`,
+                        }}
+                      >
+                        Sign in to book guided slot
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="rounded-3xl border border-border bg-card p-7 shadow-float">
+              <p className="font-display text-4xl text-primary">
+                {formatPrice(Number(service.price), service.currency)}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {["hotel", "resort", "homestay", "heritage"].includes(service.category?.toLowerCase())
+                  ? "per night"
+                  : "per person"}
+              </p>
+
+              <div className="mt-6 space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="date" className="flex items-center gap-1.5">
+                    <CalendarDays className="size-4 text-accent" /> Travel date
+                  </Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    value={date}
+                    min={new Date().toISOString().split("T")[0]}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="h-11 rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="guests" className="flex items-center gap-1.5">
+                    <Users className="size-4 text-accent" /> Guests
+                  </Label>
+                  <Input
+                    id="guests"
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={guests}
+                    onChange={(e) => setGuests(Math.max(1, Number(e.target.value)))}
+                    className="h-11 rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
+                <span className="text-sm text-muted-foreground">Total</span>
+                <span className="font-display text-2xl text-foreground">
+                  {formatPrice(Number(service.price) * guests, service.currency)}
+                </span>
+              </div>
+
+              {role === "provider" ? (
+                <div className="mt-6 rounded-xl bg-muted p-3 text-center text-xs text-muted-foreground">
+                  Providers cannot book travel services.
+                </div>
+              ) : user ? (
+                <Button
+                  variant="hero"
+                  size="lg"
+                  className="mt-6 w-full"
+                  onClick={() => {
+                    navigate({
+                      to: "/services/$serviceId/book",
+                      params: { serviceId: service.id },
+                      search: { date: date || undefined, guests },
+                    });
                   }}
                 >
-                  Sign in to book
-                </Link>
-              </Button>
-            )}
-          </div>
+                  Book Now
+                </Button>
+              ) : (
+                <Button asChild variant="hero" size="lg" className="mt-6 w-full">
+                  <Link
+                    to="/login"
+                    search={{
+                      redirect: `/services/${service.id}/book?date=${date}&guests=${guests}`,
+                    }}
+                  >
+                    Sign in to book
+                  </Link>
+                </Button>
+              )}
+            </div>
+          )}
         </aside>
       </div>
 

@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { BadgeCheck, MapPin, Star, ArrowRight } from "lucide-react";
+import { BadgeCheck, MapPin, Star, ArrowRight, Compass, Ticket } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatPrice, type ServiceWithProvider } from "@/lib/travezy";
+import { getAttractionInfo } from "@/lib/attractions";
 
 export interface RecommendationCardProps {
   service: ServiceWithProvider;
@@ -18,7 +19,9 @@ export function RecommendationCard({ service, index = 0, highlightBadge }: Recom
 
   const isStay = ["hotel", "resort", "homestay", "heritage"].includes(service.category?.toLowerCase());
   const isDining = ["restaurant", "dining", "culinary"].includes(service.category?.toLowerCase());
+  const isExperience = !isStay && !isDining;
 
+  const attraction = isExperience ? getAttractionInfo(service) : null;
   const priceSuffix = isStay ? "/ night" : isDining ? "/ person" : "/ guest";
 
   return (
@@ -42,7 +45,7 @@ export function RecommendationCard({ service, index = 0, highlightBadge }: Recom
           {/* Top Floating Badges */}
           <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
             <span className="inline-flex items-center gap-1 rounded-full bg-black/65 backdrop-blur-md px-2.5 py-1 text-[11px] font-semibold text-white capitalize shadow-sm">
-              {service.category}
+              {attraction ? attraction.attractionType : service.category}
             </span>
 
             {highlightBadge ? (
@@ -88,25 +91,47 @@ export function RecommendationCard({ service, index = 0, highlightBadge }: Recom
       {/* Footer / Price & Action */}
       <div className="mt-4 flex items-center justify-between border-t border-border/70 pt-3">
         <div>
-          <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
-            Starting from
-          </span>
-          <p className="font-display text-lg font-bold text-primary">
-            {formatPrice(Number(service.price), service.currency)}
-            <span className="text-xs font-normal text-muted-foreground ml-1">
-              {priceSuffix}
-            </span>
-          </p>
+          {attraction ? (
+            <>
+              <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
+                Admission Fee
+              </span>
+              <p className="font-display text-base font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                <Ticket className="size-3.5" />
+                {attraction.entryFeeDisplay}
+              </p>
+            </>
+          ) : (
+            <>
+              <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
+                Starting from
+              </span>
+              <p className="font-display text-lg font-bold text-primary">
+                {formatPrice(Number(service.price), service.currency)}
+                <span className="text-xs font-normal text-muted-foreground ml-1">
+                  {priceSuffix}
+                </span>
+              </p>
+            </>
+          )}
         </div>
 
         <Button
           asChild
           size="sm"
-          variant="ocean"
-          className="rounded-full text-xs gap-1 shadow-xs group-hover:shadow-sm"
+          variant={attraction ? "default" : "ocean"}
+          className={attraction ? "bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs gap-1 shadow-xs group-hover:shadow-sm" : "rounded-full text-xs gap-1 shadow-xs group-hover:shadow-sm"}
         >
           <Link to="/services/$serviceId" params={{ serviceId: service.id }}>
-            View Details <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
+            {attraction ? (
+              <>
+                <Compass className="size-3" /> Explore
+              </>
+            ) : (
+              <>
+                View Details <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
+              </>
+            )}
           </Link>
         </Button>
       </div>
